@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RetroVerse — Tienda de objetos vintage</title>
+<style>
+  :root{
+    --bg-deep:#1a0b2e;
+    --bg-grid:#2d1b4e;
+    --neon-pink:#ff2e93;
+    --neon-cyan:#00f0ff;
+    --neon-yellow:#ffe600;
+    --paper:#f4ead0;
+    --ink:#241433;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Courier New', monospace;
+    background:var(--bg-deep);
+    color:var(--paper);
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Brush Script MT', 'Segoe Script', cursive;
+  }
+  /* HERO / GRID BACKGROUND */
+  .hero{
+    position:relative;
+    min-height:60vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    background:
+      linear-gradient(180deg, rgba(26,11,46,0.2) 0%, var(--bg-deep) 80%),
+      repeating-linear-gradient(0deg, transparent 0 38px, rgba(0,240,255,0.15) 38px 39px),
+      repeating-linear-gradient(90deg, transparent 0 38px, rgba(255,46,147,0.12) 38px 39px),
+      radial-gradient(ellipse at 50% 100%, #4b1f7a 0%, var(--bg-deep) 70%);
+    border-bottom:4px solid var(--neon-pink);
+    padding:60px 20px 40px;
+    overflow:hidden;
+  }
+  .sun{
+    width:180px;height:180px;border-radius:50%;
+    background:linear-gradient(180deg,var(--neon-yellow),var(--neon-pink));
+    box-shadow:0 0 60px var(--neon-pink);
+    margin-bottom:18px;
+    position:relative;
+  }
+  .sun::after{
+    content:"";
+    position:absolute;inset:0;
+    background:repeating-linear-gradient(0deg, var(--bg-deep) 0 4px, transparent 4px 10px);
+    border-radius:50%;
+    opacity:.6;
+  }
+  .logo{
+    font-size:3.2rem;
+    letter-spacing:2px;
+    color:var(--paper);
+    text-shadow:
+      0 0 6px var(--neon-cyan),
+      0 0 18px var(--neon-cyan),
+      3px 3px 0 var(--neon-pink);
+    margin:0;
+  }
+  .tagline{
+    color:var(--neon-yellow);
+    font-size:1rem;
+    margin-top:10px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  .lede{
+    max-width:640px;
+    margin:18px auto 0;
+    line-height:1.6;
+    font-size:.95rem;
+    color:var(--paper);
+  }
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:10;
+    display:flex;flex-wrap:wrap;gap:10px;
+    justify-content:center;
+    background:var(--ink);
+    border-bottom:3px solid var(--neon-cyan);
+    padding:12px;
+  }
+  nav button{
+    background:transparent;
+    border:2px solid var(--neon-pink);
+    color:var(--neon-pink);
+    font-family:inherit;
+    font-weight:bold;
+    padding:8px 16px;
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-size:.8rem;
+    transition:.15s;
+  }
+  nav button:hover, nav button.active{
+    background:var(--neon-pink);
+    color:var(--ink);
+    box-shadow:0 0 12px var(--neon-pink);
+  }
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:30px 18px 60px;
+  }
+  section{display:none;}
+  section.active{display:block;}
+  /* SEARCH */
+  .search-bar{
+    display:flex;gap:10px;margin-bottom:26px;flex-wrap:wrap;
+  }
+  .search-bar input{
+    flex:1;min-width:200px;
+    background:var(--ink);
+    border:2px solid var(--neon-cyan);
+    color:var(--paper);
+    padding:10px 14px;
+    font-family:inherit;
+    font-size:.95rem;
+  }
+  .search-bar input::placeholder{color:#9b8bc4;}
+  .search-bar input:focus{outline:none;box-shadow:0 0 10px var(--neon-cyan);}
+  /* GRID DE PRODUCTOS */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+    gap:20px;
+  }
+  .card{
+    background:var(--ink);
+    border:2px solid var(--neon-yellow);
+    padding:16px;
+    cursor:pointer;
+    transition:.15s;
+    position:relative;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 6px 0 var(--neon-pink);
+  }
+  .card .thumb{
+    height:110px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:2.6rem;
+    background:repeating-linear-gradient(45deg, #3a2360 0 10px, #2d1b4e 10px 20px);
+    margin-bottom:10px;
+    border:1px dashed var(--neon-cyan);
+  }
+  .card h3{
+    font-family:'Arial Black', sans-serif;
+    font-size:1rem;
+    margin:0 0 6px;
+    color:var(--neon-cyan);
+  }
+  .card .meta{font-size:.78rem;color:#cbb8ef;margin:2px 0;}
+  .card .price{
+    color:var(--neon-yellow);
+    font-weight:bold;
+    font-size:1.1rem;
+    margin-top:8px;
+  }
+  .badge{
+    display:inline-block;
+    font-size:.65rem;
+    padding:2px 6px;
+    border:1px solid var(--neon-pink);
+    color:var(--neon-pink);
+    text-transform:uppercase;
+    margin-top:6px;
+  }
+  /* DETALLE */
+  .detail-box{
+    background:var(--ink);
+    border:3px solid var(--neon-cyan);
+    padding:26px;
+    box-shadow:0 0 24px rgba(0,240,255,.25);
+  }
+  .detail-box .thumb-lg{
+    height:200px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:5rem;
+    background:repeating-linear-gradient(45deg, #3a2360 0 12px, #2d1b4e 12px 24px);
+    border:1px dashed var(--neon-yellow);
+    margin-bottom:18px;
+  }
+  .detail-box h2{color:var(--neon-pink);font-size:1.8rem;margin-top:0;}
+  .detail-box table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem;}
+  .detail-box td{padding:6px 4px;border-bottom:1px solid #3a2360;}
+  .detail-box td:first-child{color:var(--neon-yellow);width:40%;}
+  .back-btn{
+    margin-bottom:16px;
+    background:var(--neon-cyan);
+    color:var(--ink);
+    border:none;
+    padding:8px 16px;
+    font-weight:bold;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  /* TABLAS DE INFO (sección educativa) */
+  .info-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:16px 0 28px;
+    font-size:.85rem;
+  }
+  .info-table th,.info-table td{
+    border:1px solid var(--neon-cyan);
+    padding:8px 10px;
+    text-align:left;
+  }
+  .info-table th{
+    background:var(--ink);
+    color:var(--neon-yellow);
+  }
+  .info-table tr:nth-child(even){background:rgba(0,240,255,0.06);}
+  .panel{
+    background:var(--ink);
+    border-left:4px solid var(--neon-pink);
+    padding:16px 20px;
+    margin-bottom:20px;
+    line-height:1.6;
+    font-size:.9rem;
+  }
+  .panel h3{color:var(--neon-cyan);margin-top:0;font-family:'Arial Black',sans-serif;font-size:1.05rem;}
+  footer{
+    text-align:center;
+    padding:20px;
+    background:var(--ink);
+    border-top:3px solid var(--neon-pink);
+    font-size:.75rem;
+    color:#9b8bc4;
+  }
+  .empty{
+    text-align:center;
+    padding:40px;
+    color:var(--neon-yellow);
+  }
+  @media(max-width:480px){
+    .logo{font-size:2.2rem;}
+    .sun{width:120px;height:120px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="sun"></div>
+  <h1 class="logo">📼 RetroVerse</h1>
+  <p class="tagline">Compra · Venta · Intercambio retro</p>
+  <p class="lede">RetroVerse es una tienda digital dedicada a objetos vintage, coleccionables
+  y tecnología retro. Un lugar para quienes coleccionan consolas de los 80, walkmans,
+  cámaras analógicas y todo lo que hace sonar la nostalgia.</p>
+</div>
+
+<nav>
+  <button data-view="inicio" class="active">🏠 Inicio</button>
+  <button data-view="catalogo">🛍️ Catálogo</button>
+  <button data-view="info">📀 Sobre el registro</button>
+</nav>
+
+<main>
+
+  <!-- INICIO -->
+  <section id="inicio" class="active">
+    <div class="panel">
+      <h3>¿Qué es RetroVerse?</h3>
+      <p>Una tienda pensada para coleccionistas y nostálgicos: comprá piezas únicas,
+      vendé lo que ya no usás, e intercambiá tesoros retro con otros fans. Cada producto
+      tiene su año de fabricación, estado de conservación y una historia propia.</p>
+      <p>Usá el menú de arriba para explorar el <strong>Catálogo</strong> o aprender
+      cómo se organiza la información de cada producto en <strong>Sobre el registro</strong>.</p>
+    </div>
+  </section>
+
+  <!-- CATALOGO -->
+  <section id="catalogo">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍 Buscar producto por nombre...">
+    </div>
+    <div id="gridContainer" class="grid"></div>
+  </section>
+
+  <!-- DETALLE -->
+  <section id="detalle">
+    <button class="back-btn" id="backBtn">← Volver al catálogo</button>
+    <div id="detailContent"></div>
+  </section>
+
+  <!-- INFO / REGISTRO -->
+  <section id="info">
+    <div class="panel">
+      <h3>¿Qué es un registro?</h3>
+      <p>Un <strong>registro</strong> es como una "ficha" de información sobre una sola cosa.
+      Pensalo como una tarjeta de un fichero: cada producto de RetroVerse tiene su propia
+      tarjeta con datos como su nombre, categoría, año, precio, etc. Todas las tarjetas
+      juntas forman el catálogo completo.</p>
+    </div>
+
+    <div class="panel">
+      <h3>¿Qué es una clave principal?</h3>
+      <p>Una <strong>clave principal</strong> (o clave primaria) es el dato que identifica
+      a cada registro de forma única, sin que se repita nunca. En RetroVerse, esa clave es
+      <strong>idProducto</strong>: ningún otro producto puede tener el mismo número de
+      identificación. Así, aunque dos productos se llamen igual o cuesten lo mismo, el
+      sistema siempre sabe exactamente de cuál se trata gracias a su idProducto.</p>
+    </div>
+
+    <h3 style="color:var(--neon-pink)">Estructura del registro "Producto"</h3>
+    <table class="info-table">
+      <tr><th>Campo</th><th>Tipo de dato</th><th>Descripción</th></tr>
+      <tr><td>idProducto</td><td>Entero</td><td>Clave principal. Identifica de forma única a cada producto.</td></tr>
+      <tr><td>nombreProducto</td><td>Cadena</td><td>Nombre comercial del artículo retro.</td></tr>
+      <tr><td>categoria</td><td>Cadena</td><td>Tipo de objeto: consola, audio, fotografía, etc.</td></tr>
+      <tr><td>añoFabricacion</td><td>Entero</td><td>Año en que fue fabricado el producto.</td></tr>
+      <tr><td>estado</td><td>Cadena</td><td>Condición física: nuevo, usado, restaurado, etc.</td></tr>
+      <tr><td>precio</td><td>Real (decimal)</td><td>Valor de venta del producto.</td></tr>
+      <tr><td>descripcion</td><td>Cadena</td><td>Detalle breve sobre el producto.</td></tr>
+      <tr><td>stock</td><td>Entero</td><td>Cantidad disponible para la venta.</td></tr>
+    </table>
+
+    <h3 style="color:var(--neon-pink)">Prompts utilizados para construir RetroVerse</h3>
+    <div class="panel">
+      <h3>Prompt 1</h3>
+      <p>"Diseña un e-commerce creativo llamado RetroVerse dedicado a objetos vintage y
+      tecnología retro. Define un registro principal Producto con campos, tipos de datos
+      y una clave principal."</p>
+      <p>Este prompt definió la base conceptual del proyecto: el nombre, la temática y,
+      sobre todo, la estructura de datos. A partir de él se decidieron los ocho campos del
+      registro Producto y se eligió idProducto como clave principal.</p>
+    </div>
+    <div class="panel">
+      <h3>Prompt 2</h3>
+      <p>"Genera una aplicación web HTML, CSS y JavaScript para RetroVerse con catálogo,
+      búsqueda y detalle de productos."</p>
+      <p>Este prompt pidió convertir el diseño conceptual en una aplicación funcional.
+      Con él se generó el código de esta página: la grilla de productos, el buscador en
+      tiempo real y la vista de detalle de cada artículo, todo con estilo visual retro
+      de los años 80 y 90.</p>
+    </div>
+    <div class="panel">
+      <h3>Prompt 3</h3>
+      <p>"Explica qué es un registro y una clave principal para estudiantes de primer
+      año de programación."</p>
+      <p>Este prompt buscó que los conceptos técnicos fueran accesibles para quienes
+      recién empiezan a programar. Por eso, en esta sección se explican el registro como
+      una "ficha" y la clave principal como el dato que nunca se repite, usando ejemplos
+      concretos del propio catálogo en lugar de definiciones abstractas.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Reflexión: ¿cómo ayudó la IA en este proyecto?</h3>
+      <p>La inteligencia artificial colaboró diseñando la estructura de datos (definiendo
+      qué campos eran necesarios y por qué idProducto debía ser la clave principal),
+      generando el código de la aplicación web completa, redactando las explicaciones en
+      lenguaje sencillo y creando los datos de ejemplo. Esto permitió pasar de una idea
+      general a una aplicación funcional en mucho menos tiempo, dejando a la persona el rol
+      de definir el concepto, revisar el resultado y tomar las decisiones finales sobre el
+      diseño y el contenido.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  RetroVerse · Proyecto educativo de e-commerce retro · Datos de ejemplo generados automáticamente
+</footer>
+
+<script>
+const productos = [
+  {
+    idProducto: 1,
+    nombreProducto: "Consola Nintendo Family Game",
+    categoria: "Consolas",
+    añoFabricacion: 1988,
+    estado: "Usado - funcional",
+    precio: 45000,
+    descripcion: "Consola clásica de los 80, incluye dos joysticks y cartucho de 999 juegos en 1. Ideal para coleccionistas nostálgicos.",
+    stock: 4,
+    emoji: "🕹️"
+  },
+  {
+    idProducto: 2,
+    nombreProducto: "Walkman Sony WM-EX",
+    categoria: "Audio",
+    añoFabricacion: 1992,
+    estado: "Restaurado",
+    precio: 32000,
+    descripcion: "Reproductor de cassettes portátil restaurado, motor revisado y correas nuevas. Sonido cálido analógico.",
+    stock: 2,
+    emoji: "📻"
+  },
+  {
+    idProducto: 3,
+    nombreProducto: "Cámara Polaroid 600",
+    categoria: "Fotografía",
+    añoFabricacion: 1985,
+    estado: "Nuevo (stock antiguo)",
+    precio: 58000,
+    descripcion: "Cámara instantánea de los 80 en caja original, nunca usada. Compatible con film Polaroid 600 actual.",
+    stock: 1,
+    emoji: "📷"
+  }
+];
+
+let currentList = productos;
+
+function renderGrid(list){
+  const c = document.getElementById('gridContainer');
+  if(list.length === 0){
+    c.innerHTML = '<div class="empty">😕 No se encontraron productos con ese nombre.</div>';
+    return;
+  }
+  c.innerHTML = list.map(p => `
+    <div class="card" onclick="showDetail(${p.idProducto})">
+      <div class="thumb">${p.emoji}</div>
+      <h3>${p.nombreProducto}</h3>
+      <div class="meta">📂 ${p.categoria} · 📅 ${p.añoFabricacion}</div>
+      <div class="meta">🔧 ${p.estado}</div>
+      <div class="price">$${p.precio.toLocaleString('es-AR')}</div>
+      <span class="badge">Stock: ${p.stock}</span>
+    </div>
+  `).join('');
+}
+
+function showDetail(id){
+  const p = productos.find(x => x.idProducto === id);
+  if(!p) return;
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-box">
+      <div class="thumb-lg">${p.emoji}</div>
+      <h2>${p.nombreProducto}</h2>
+      <p>${p.descripcion}</p>
+      <table>
+        <tr><td>ID Producto</td><td>${p.idProducto}</td></tr>
+        <tr><td>Categoría</td><td>${p.categoria}</td></tr>
+        <tr><td>Año de fabricación</td><td>${p.añoFabricacion}</td></tr>
+        <tr><td>Estado</td><td>${p.estado}</td></tr>
+        <tr><td>Precio</td><td>$${p.precio.toLocaleString('es-AR')}</td></tr>
+        <tr><td>Stock disponible</td><td>${p.stock} unidad(es)</td></tr>
+      </table>
+    </div>
+  `;
+  setActiveView('detalle');
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  const filtered = productos.filter(p => p.nombreProducto.toLowerCase().includes(q));
+  renderGrid(filtered);
+});
+
+document.getElementById('backBtn').addEventListener('click', () => setActiveView('catalogo'));
+
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setActiveView(btn.dataset.view);
+  });
+});
+
+function setActiveView(id){
+  document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+renderGrid(productos);
+</script>
+
+</body>
+</html>
